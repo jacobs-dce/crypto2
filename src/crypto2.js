@@ -137,6 +137,27 @@ const rsaDecrypt = async function (text, privateKey) {
   return decrypted;
 };
 
+//algo: Use crypto.getHashes() to obtain an array of names of the available signing algorithms.
+//outputFormat: The outputFormat can specify one of 'latin1', 'hex' or 'base64'
+const sign_ = async function (text, privateKey, algo, outputFormat) {
+  const sign = crypto.createSign(algo);
+
+  await processStream(sign, text, { from: 'utf8', to: 'utf8' });
+
+  const signature = sign.sign(privateKey, outputFormat);
+
+  return signature;
+};
+const verify_ = async function (text, publicKey, signature, algo, outputFormat) {
+  const verify = crypto.createVerify(algo);
+
+  await processStream(verify, text, { from: 'utf8', to: 'utf8' });
+
+  const isSignatureValid = verify.verify(publicKey, signature, outputFormat);
+
+  return isSignatureValid;
+};
+
 const sha256Sign = async function (text, privateKey) {
   const sign = crypto.createSign('RSA-SHA256');
 
@@ -202,8 +223,8 @@ const crypto2 = {
   encrypt: aes256cbcEncrypt,
   decrypt: aes256cbcDecrypt,
 
-  sign: sha256Sign,
-  verify: sha256Verify,
+  sign: sign_,
+  verify: verify_,
 
   hash: sha256,
   hmac: sha256hmac
@@ -214,8 +235,8 @@ crypto2.encrypt.rsa = rsaEncrypt;
 crypto2.decrypt.aes256cbc = aes256cbcDecrypt;
 crypto2.decrypt.rsa = rsaDecrypt;
 
-crypto2.sign.sha256 = sha256Sign;
-crypto2.verify.sha256 = sha256Verify;
+//crypto2.sign.sha256 = sha256Sign;
+//crypto2.verify.sha256 = sha256Verify;
 
 crypto2.hash.md5 = md5;
 crypto2.hash.sha1 = sha1;

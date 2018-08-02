@@ -20,7 +20,7 @@
       "email": "gagathos@thecommotion.com"
     }
   ],
-  "main": "dist/crypto2.js",
+  "main": "src/crypto2.js",
   "dependencies": {
     "babel-runtime": "6.26.0",
     "node-rsa": "0.4.2",
